@@ -19,3 +19,5 @@ Comandos de Instalação e Configuração:
 - create-react-app frontend
 - yarn add eslint-config-airbnb eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react -D
 - yarn add axios
+- yarn add styled-components
+- yarn add font-awesome

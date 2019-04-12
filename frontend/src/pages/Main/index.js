@@ -1,44 +1,67 @@
 import React, { Component } from "react";
 import logo from "../../assets/logo.svg";
-import "./style.css";
+import { Container, Box, Button, Logo, Section } from "./style";
+import "font-awesome/css/font-awesome.css";
 import api from "../../services/api";
 
 class App extends Component {
-
   state = {
+    id: 0,
     planets: {},
-    id: 0
+    qtdeFilms: 0,
+    loading: false
   };
 
   async componentDidMount() {
     const id = Math.floor(Math.random() * 61) + 1;
+
+    this.setState({ loading: true });
     const { data } = await api.get(`planets/${id}`);
-    this.setState({ planets: data, id: id });
+
+    this.setState({
+      id: id,
+      planets: data,
+      loading: false,
+      qtdeFilms: data.films.length
+    });
   }
 
-  handleClick = async (e) => {
+  handleClick = async e => {
     e.preventDefault();
 
-    const id = Math.floor(Math.random() * 61) + 1;
-    const { data } = await api.get(`planets/${id}`);
-    this.setState({ planets: data, id: id });
-  }
+    this.setState({ loading: true });
+
+    try {
+      const id = Math.floor(Math.random() * 61) + 1;
+      const { data } = await api.get(`planets/${id}`);
+
+      this.setState({ id: id, planets: data, qtdeFilms: data.films.length });
+    } catch (error) {
+    } finally {
+      this.setState({ loading: false });
+    }
+  };
 
   render() {
-
-    const { planets } = this.state;
+    const { planets, loading, qtdeFilms } = this.state;
 
     return (
-      <div className="App">
-        <header className="App-header">
-          {/* <img src={logo} className="App-logo" alt="logo" /> */}
-          <p>{planets.name}</p>
-          <p>{planets.population}</p>
-          <p>{planets.climate}</p>
-          <p>{planets.terrain}</p>
-          <button onClick={this.handleClick}>PROXIMO</button>
-        </header>
-      </div>
+      <Container>
+        <Logo src={logo} alt="logo" />
+        <Box>
+          <Section>
+            <h1>Planet {planets.name}</h1>
+            <div className="item">Population: {planets.population}</div>
+            <div className="item">Climate: {planets.climate}</div>
+            <div className="item">Terrain: {planets.terrain}</div>
+            <div className="item">Featured in {qtdeFilms} films</div>
+          </Section>
+        </Box>
+
+        <Button onClick={this.handleClick}>
+          {loading ? <i className="fa fa-spinner fa-pulse" /> : "NEXT"}
+        </Button>
+      </Container>
     );
   }
 }
